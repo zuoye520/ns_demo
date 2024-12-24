@@ -1,32 +1,22 @@
 <template>
   <button
-    class="base-button text-white px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200"
+    class="btn-primary relative overflow-hidden group"
     :class="{
-      'w-full': fullWidth
+      'w-full': fullWidth,
+      'opacity-50 cursor-not-allowed hover:scale-100': disabled
     }"
+    :disabled="disabled"
   >
-    <slot></slot>
+    <div class="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <span class="relative z-10">
+      <slot></slot>
+    </span>
   </button>
 </template>
 
 <script setup lang="ts">
 defineProps<{
   fullWidth?: boolean
+  disabled?: boolean
 }>()
 </script>
-
-<style scoped>
-.base-button {
-  background: linear-gradient(135deg, #00e789, #00cc7a);
-  box-shadow: 
-    0 4px 12px rgba(0, 231, 137, 0.2),
-    0 2px 4px rgba(0, 231, 137, 0.1);
-}
-
-.base-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 
-    0 6px 16px rgba(0, 231, 137, 0.3),
-    0 3px 6px rgba(0, 231, 137, 0.2);
-}
-</style>

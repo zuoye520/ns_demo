@@ -1,11 +1,14 @@
-```vue
 <template>
-  <button 
-    class="swap-arrow-btn bg-gray-800 hover:bg-gray-700 p-2 rounded-xl border border-gray-700/50 w-10 h-10 flex items-center justify-center transition-all duration-200"
-    @click="$emit('click')"
-  >
-    <arrow-down-icon class="h-5 w-5 text-primary" />
-  </button>
+  <div class="flex justify-center -my-4">
+    <button 
+      class="swap-arrow-btn bg-background-dark/80 hover:bg-background-dark p-2 rounded-xl 
+             border border-white/5 w-10 h-10 flex items-center justify-center 
+             transition-all duration-200 shadow-card hover:shadow-lg"
+      @click="$emit('click')"
+    >
+      <arrow-down-icon class="h-5 w-5 text-primary" />
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -15,6 +18,7 @@ defineEmits<{
   (e: 'click'): void
 }>()
 </script>
+
 
 <style scoped>
 .swap-arrow-btn {

@@ -1,80 +1,83 @@
 ```vue
 <template>
-  <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 shadow-xl">
-    <SwapHeader />
+  <div class="card p-6 max-w-[480px] mx-auto">
+    <SwapHeader 
+      @show-settings="showSettings = true"
+      @show-history="showHistory = true"
+    />
 
-    <div class="relative space-y-8">
+    <div class="space-y-3">
       <TokenInput
         label="From"
-        :balance="`Balance: ${fromToken.balance}`"
+        :balance="fromToken?.balance ?? '0'"
         v-model="fromAmount"
-        :token-icon="fromToken.icon"
-        :token-symbol="fromToken.symbol"
+        :token-icon="fromToken?.icon"
+        :token-symbol="fromToken?.symbol"
         :usd-value="fromUsdValue"
         show-percentages
         @select-token="showFromTokenList = true"
         @select-percentage="selectPercentage"
       />
 
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-        <SwapArrow @click="switchTokens" />
-      </div>
+      <SwapArrow @click="switchTokens" />
 
       <TokenInput
         label="To"
-        :balance="`Balance: ${toToken.balance}`"
+        :balance="toToken?.balance ?? '0'"
         v-model="toAmount"
-        :token-icon="toToken.icon"
-        :token-symbol="toToken.symbol"
+        :token-icon="toToken?.icon"
+        :token-symbol="toToken?.symbol"
         :usd-value="toUsdValue"
         @select-token="showToTokenList = true"
       />
     </div>
 
-    <div v-if="showSwapInfo" class="mt-6 mb-6">
-      <SwapInfo
-        :rate="rate"
-        :minimum-received="minimumReceived"
-        :price-impact="priceImpact"
-        :slippage-tolerance="slippageTolerance"
-        :lp-fee="lpFee"
-        :route="route"
-        @show-route="showRouteModal = true"
-      />
-    </div>
-
-    <BaseButton full-width>Connect Wallet</BaseButton>
-
-    <TokenListModal
-      :show="showFromTokenList"
-      @close="showFromTokenList = false"
-      @select="selectFromToken"
+    <SwapInfo
+      v-if="showSwapInfo"
+      class="mt-4 mb-4"
+      :rate="rate"
+      :minimum-received="minimumReceived"
+      :price-impact="priceImpact"
+      :slippage-tolerance="slippageTolerance"
+      :lp-fee="lpFee"
+      :route="route"
+      @show-route="showRouteModal = true"
     />
 
-    <TokenListModal
-      :show="showToTokenList"
-      @close="showToTokenList = false"
-      @select="selectToToken"
-    />
+    <Button 
+      class="w-full mt-4"
+      size="lg"
+    >
+      Connect Wallet
+    </Button>
 
-    <SwapRouteModal
-      :show="showRouteModal"
+    <SwapModals
+      :show-from-list="showFromTokenList"
+      :show-to-list="showToTokenList"
+      :show-route="showRouteModal"
+      :show-settings="showSettings"
+      :show-history="showHistory"
       :from-token="fromToken"
       :to-token="toToken"
-      @close="showRouteModal = false"
+      @close-from-list="showFromTokenList = false"
+      @close-to-list="showToTokenList = false"
+      @close-route="showRouteModal = false"
+      @close-settings="showSettings = false"
+      @close-history="showHistory = false"
+      @select-from-token="selectFromToken"
+      @select-to-token="selectToToken"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import Button from '@/components/ui/Button.vue'
 import SwapHeader from './SwapHeader.vue'
 import TokenInput from './TokenInput.vue'
 import SwapArrow from './SwapArrow.vue'
 import SwapInfo from './SwapInfo.vue'
-import BaseButton from '../ui/BaseButton.vue'
-import TokenListModal from './modals/TokenListModal.vue'
-import SwapRouteModal from './modals/SwapRouteModal.vue'
+import SwapModals from './SwapModals.vue'
 
 // State
 const fromAmount = ref('')
@@ -82,6 +85,8 @@ const toAmount = ref('')
 const showFromTokenList = ref(false)
 const showToTokenList = ref(false)
 const showRouteModal = ref(false)
+const showSettings = ref(false)
+const showHistory = ref(false)
 
 // Token Data
 const fromToken = ref({
@@ -100,11 +105,13 @@ const toToken = ref({
 
 // Computed Values
 const fromUsdValue = computed(() => {
-  return fromAmount.value ? `$${(Number(fromAmount.value) * 0.53).toFixed(2)}` : undefined
+  if (!fromAmount.value) return undefined
+  return `$${(Number(fromAmount.value) * 0.53).toFixed(2)}`
 })
 
 const toUsdValue = computed(() => {
-  return toAmount.value ? `$${(Number(toAmount.value) * 1.00).toFixed(2)}` : undefined
+  if (!toAmount.value) return undefined
+  return `$${(Number(toAmount.value) * 1.00).toFixed(2)}`
 })
 
 const showSwapInfo = computed(() => {
@@ -121,7 +128,7 @@ const route = ref('NULS > USDT')
 
 // Methods
 const selectPercentage = (percent: number) => {
-  fromAmount.value = ((Number(fromToken.value.balance) * percent) / 100).toString()
+  fromAmount.value = ((Number(fromToken.value?.balance) * percent) / 100).toString()
 }
 
 const selectFromToken = (token: any) => {

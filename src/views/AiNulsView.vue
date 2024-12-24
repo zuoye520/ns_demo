@@ -1,4 +1,3 @@
-```vue
 <template>
   <div class="space-y-6">
     <div class="mb-8">
@@ -55,6 +54,5 @@
 </template>
 
 <script setup lang="ts">
-import StakeCard from '@/components/ainuls/StakeCard.vue'
+import StakeCard from '@/components/stake/StakeCard.vue'
 </script>
-```

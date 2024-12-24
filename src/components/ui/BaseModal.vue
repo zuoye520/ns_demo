@@ -1,4 +1,3 @@
-```vue
 <template>
   <Teleport to="body">
     <TransitionRoot appear :show="show" as="template">
@@ -12,7 +11,7 @@
           leave-from="opacity-100"
           leave-to="opacity-0"
         >
-          <div class="fixed inset-0 bg-black/75" />
+          <div class="fixed inset-0 bg-black/75 backdrop-blur-sm" />
         </TransitionChild>
 
         <div class="fixed inset-0 overflow-y-auto">
@@ -27,13 +26,7 @@
               leave-to="opacity-0 scale-95"
             >
               <DialogPanel 
-                class="w-full transform overflow-hidden rounded-2xl bg-gray-800 shadow-xl transition-all"
-                :class="{
-                  'sm:max-w-[95%] md:max-w-[600px]': maxWidth === 'md',
-                  'sm:max-w-[95%] md:max-w-[768px]': maxWidth === 'lg',
-                  'sm:max-w-[95%] md:max-w-[1024px]': maxWidth === 'xl',
-                  'max-w-[95%]': !maxWidth
-                }"
+                class="w-full transform overflow-hidden rounded-2xl bg-background-card shadow-card transition-all max-w-[95%] sm:max-w-[600px]"
               >
                 <slot></slot>
               </DialogPanel>
@@ -46,36 +39,13 @@
 </template>
 
 <script setup lang="ts">
-import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import { Dialog, DialogPanel, TransitionRoot, TransitionChild } from '@headlessui/vue'
 
 defineProps<{
   show: boolean
-  maxWidth?: 'md' | 'lg' | 'xl'
 }>()
 
 defineEmits<{
   (e: 'close'): void
 }>()
 </script>
-
-<style scoped>
-/* Custom scrollbar for modals */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-</style>
-```
